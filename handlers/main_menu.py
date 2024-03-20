@@ -15,7 +15,11 @@ from enums import BaseCB, KeyboardButtons
 async def com_start_for_user(user_id: int):
     text = ('Скорее забирай подарок курс "60 законов денег" в нашем канале:\n'
             '➡️ https://t.me/+vlvsa5AvvQEzOGFi')
-    await bot.send_message(chat_id=user_id, text=text, reply_markup=ReplyKeyboardRemove())
+    await bot.send_message(
+        chat_id=user_id,
+        text=text,
+        protect_content=True,
+        reply_markup=ReplyKeyboardRemove())
 
 
 @dp.chat_join_request()
@@ -29,7 +33,7 @@ async def chat_join_request(request: ChatJoinRequest):
             '- вы узнаете о самых эффективных и простых денежных законах\n'
             '- вам будет проще не нарушать законы денег и открыть новые возможности\n'
             '- сможете поменять свое денежное мышление и притянете изобилие\n\n'
-            'Нажмите на кнопку "ПОЛУЧИТЬ ПОДАРОК" 👇 и получи доступ на курс ✨')
+            'Нажмите 👉 /start или кнопку "ПОЛУЧИТЬ ПОДАРОК" 👇 и получи доступ на курс ✨')
 
     await request.answer_pm(text, reply_markup=kb.get_stat_user_kb())
     try:
