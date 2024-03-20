@@ -1,6 +1,7 @@
-from aiogram.types import ChatJoinRequest, Message, CallbackQuery
+from aiogram.types import ChatJoinRequest, Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state
 from aiogram.enums.content_type import ContentType
 
 import logging
@@ -8,22 +9,29 @@ import logging
 import db
 import keyboards as kb
 from init import dp, bot, ADMINS
-from enums import BaseCB
+from enums import BaseCB, KeyboardButtons
+
+
+async def com_start_for_user(user_id: int):
+    text = ('Скорее забирай подарок курс "60 законов денег" в нашем канале:\n'
+            '➡️ https://t.me/+vlvsa5AvvQEzOGFi')
+    await bot.send_message(chat_id=user_id, text=text, reply_markup=ReplyKeyboardRemove())
 
 
 @dp.chat_join_request()
 async def chat_join_request(request: ChatJoinRequest):
-    text = ('<b>Благодарим за подписку на канал https://t.me/ForMagicLife_RU ❤️</b>\n\n'
-            'Скорее <b>забирай подарок курс "60 законов денег"</b> (60 ежедневных аудио в закрытом Телеграм канале '
-            'для увеличения дохода и исполнения желаний)\n\n'
-            'На курсе будет много пользы, которая изменит вашу жизнь!\n\n'
-            'В результате вы:\n\n'
-            '- узнаете о денежных законах\n'
-            '- поймете, как не нарушать законы денег и открыть новые возможности\n'
-            '- поменяете свое денежное мышление и притяните изобилие\n\n'
-            'Нажмите <b>START/СТАРТ</b> чтобы получить курс')
+    text = ('Вам подарок 🎁 за подписку на канал Анастасии А\n\n'
+            'Привет, волшебница 🪄\n\n'
+            'Дарим супер важный курс, с которого начинается денежная трансформация многих волшебниц 🔥\n\n'
+            '💰 «60 законов денег» 💰\n\n'
+            'Это 60 ежедневных аудио в закрытом телеграм-канале для увеличения дохода и исполнения желаний 💥\n\n'
+            'После курса:\n\n'
+            '- вы узнаете о самых эффективных и простых денежных законах\n'
+            '- вам будет проще не нарушать законы денег и открыть новые возможности\n'
+            '- сможете поменять свое денежное мышление и притянете изобилие\n\n'
+            'Нажмите на кнопку "ПОЛУЧИТЬ ПОДАРОК" 👇 и получи доступ на курс ✨')
 
-    await request.answer_pm(text)
+    await request.answer_pm(text, reply_markup=kb.get_stat_user_kb())
     try:
         await request.approve()
     except Exception as ex:
@@ -50,9 +58,13 @@ async def com_start(msg: Message):
         text = f'<b>Всего пользователей:</b> {len(users)}'
         await msg.answer(text, reply_markup=kb.get_admin_kb())
     else:
-        text = ('Скорее забирай подарок курс "60 законов денег" в нашем канале:\n'
-                '➡️ https://t.me/+vlvsa5AvvQEzOGFi')
-        await msg.answer(text)
+        await com_start_for_user(user_id=msg.from_user.id)
+
+
+# старт по кнопке
+@dp.message (lambda msg: msg.text == KeyboardButtons.SEND_PRICE.value, StateFilter(default_state))
+async def com_start(msg: Message):
+    await com_start_for_user(user_id=msg.from_user.id)
 
 
 # начать рассылку
