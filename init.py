@@ -1,5 +1,5 @@
-from aiogram import Dispatcher
-from aiogram import Bot
+from aiogram import Dispatcher, Bot
+from aiogram.types import BotCommand
 from aiogram.enums import ParseMode
 
 from dotenv import load_dotenv
@@ -27,3 +27,11 @@ ENGINE = create_async_engine(url=getenv('DB_URL'))
 
 admins_str = getenv('ADMINS')
 ADMINS = json.loads(admins_str)
+
+
+async def set_main_menu() -> None:
+    main_menu_commands = [
+        BotCommand(command='/start',
+                   description='Перезапустить бот'),
+    ]
+    await bot.set_my_commands (main_menu_commands)
