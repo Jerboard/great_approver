@@ -15,8 +15,7 @@ from enums import BaseCB, KeyboardButtons, TextTypes
 
 
 async def com_start_for_user(user_id: int):
-    # text = ('Скорее забирай подарок курс "60 законов денег" в нашем канале:\n'
-    #         '➡️ https://t.me/+vlvsa5AvvQEzOGFi')
+    await db.update_user(user_id=user_id, is_active=True)
     text_info = await db.get_text (channel_id=CHANNEL_ID, text_type=TextTypes.SECOND.value)
     entities = recover_entities (text_info.entities)
     if text_info.photo_id:
@@ -40,17 +39,6 @@ async def com_start_for_user(user_id: int):
 
 @dp.chat_join_request()
 async def chat_join_request(request: ChatJoinRequest):
-    # text = ('Вам подарок 🎁 за подписку на канал Анастасии А\n\n'
-    #         'Привет, волшебница 🪄\n\n'
-    #         'Дарим супер важный курс, с которого начинается денежная трансформация многих волшебниц 🔥\n\n'
-    #         '💰 «60 законов денег» 💰\n\n'
-    #         'Это 60 ежедневных аудио в закрытом телеграм-канале для увеличения дохода и исполнения желаний 💥\n\n'
-    #         'После курса:\n\n'
-    #         '- вы узнаете о самых эффективных и простых денежных законах\n'
-    #         '- вам будет проще не нарушать законы денег и открыть новые возможности\n'
-    #         '- сможете поменять свое денежное мышление и притянете изобилие\n\n'
-    #         'Нажмите 👉 /start или кнопку "ПОЛУЧИТЬ ПОДАРОК" 👇 и получи доступ на курс ✨')
-
     text_info = await db.get_text(channel_id=CHANNEL_ID, text_type=TextTypes.FIRST.value)
     entities = recover_entities(text_info.entities)
 
@@ -94,7 +82,12 @@ async def chat_join_request(request: ChatJoinRequest):
 async def com_start(msg: Message):
     if msg.from_user.id in ADMINS:
         users = await db.get_all_users()
-        text = f'<b>Всего пользователей:</b> {len(users)}'
+        count_active_user = 0
+        for user in users:
+            if user.is_active:
+                count_active_user += 1
+        text = (f'<b>Всего пользователей:</b> {len(users)}\n'
+                f'<b>Получили подарок:</b> {count_active_user}')
         await msg.answer(text, reply_markup=kb.get_admin_kb())
     else:
         await com_start_for_user(user_id=msg.from_user.id)

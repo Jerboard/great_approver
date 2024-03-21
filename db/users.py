@@ -13,6 +13,7 @@ class UserRow(t.Protocol):
     username: int
     first_visit: int
     channel_id: int
+    is_active: bool
 
 
 UserTable = sa.Table(
@@ -23,7 +24,9 @@ UserTable = sa.Table(
     sa.Column('full_name', sa.String(255)),
     sa.Column('username', sa.String(255)),
     sa.Column('first_visit', sa.DateTime),
-    sa.Column('channel_id', sa.BigInteger)
+    sa.Column('channel_id', sa.BigInteger),
+    sa.Column('is_active', sa.Boolean, default=False),
+
 )
 
 
@@ -43,6 +46,11 @@ async def add_user(user_id: int, full_name: str, username: str, channel_id: int)
                     channel_id=channel_id,
                 )
             )
+
+
+async def update_user(user_id: int, is_active: bool) -> None:
+    async with begin_connection() as conn:
+        await conn.execute(UserTable.update().where(UserTable.c.user_id == user_id).values(is_active=is_active))
 
 
 # возвращает всех пользователей
