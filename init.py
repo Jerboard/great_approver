@@ -19,8 +19,8 @@ except:
 load_dotenv ()
 loop = asyncio.get_event_loop()
 dp = Dispatcher()
-# TOKEN = getenv("TOKEN")
-TOKEN = '7181274585:AAEPJ_CXjhKFR3CiLhV8W9AS_8KmHej7JmI'
+TOKEN = getenv("TOKEN")
+# TOKEN = '7181274585:AAEPJ_CXjhKFR3CiLhV8W9AS_8KmHej7JmI'
 bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
 DEBUG = bool(int(getenv('DEBUG')))
