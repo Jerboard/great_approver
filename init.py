@@ -19,7 +19,9 @@ except:
 load_dotenv ()
 loop = asyncio.get_event_loop()
 dp = Dispatcher()
-bot = Bot(getenv("TOKEN"), parse_mode=ParseMode.HTML)
+# TOKEN = getenv("TOKEN")
+TOKEN = '7181274585:AAEPJ_CXjhKFR3CiLhV8W9AS_8KmHej7JmI'
+bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
 DEBUG = bool(int(getenv('DEBUG')))
 
@@ -27,6 +29,7 @@ ENGINE = create_async_engine(url=getenv('DB_URL'))
 
 admins_str = getenv('ADMINS')
 ADMINS = json.loads(admins_str)
+CHANNEL_ID = -1002095723756
 
 
 async def set_main_menu() -> None:
