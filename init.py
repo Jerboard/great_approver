@@ -5,6 +5,7 @@ from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 from os import getenv
 from sqlalchemy.ext.asyncio import create_async_engine
+from pytz import timezone
 
 import json
 import asyncio
@@ -30,6 +31,9 @@ ENGINE = create_async_engine(url=getenv('DB_URL'))
 admins_str = getenv('ADMINS')
 ADMINS = json.loads(admins_str)
 CHANNEL_ID = -1002095723756
+TZ = timezone('Europe/Moscow')
+DATE_FORMAT = '%d.%m.%Y'
+
 
 
 async def set_main_menu() -> None:

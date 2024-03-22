@@ -11,7 +11,7 @@ class UserRow(t.Protocol):
     user_id: int
     full_name: int
     username: int
-    first_visit: int
+    first_visit: datetime
     channel_id: int
     is_active: bool
 
@@ -26,7 +26,6 @@ UserTable = sa.Table(
     sa.Column('first_visit', sa.DateTime),
     sa.Column('channel_id', sa.BigInteger),
     sa.Column('is_active', sa.Boolean, default=False),
-
 )
 
 

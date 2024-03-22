@@ -1,17 +1,13 @@
-from aiogram.types import ChatJoinRequest, Message, CallbackQuery, ReplyKeyboardRemove, MessageEntity
-from aiogram.filters import CommandStart, StateFilter
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import default_state
-from aiogram.enums.content_type import ContentType
-
-import logging
-import json
 
 import db
 import keyboards as kb
-from init import dp, bot, ADMINS, CHANNEL_ID
+from init import dp, CHANNEL_ID
 from utils.entities_utils import save_entities
-from enums import BaseCB, KeyboardButtons, TextTypes
+from utils.message_utils import com_start_admin
+from enums import BaseCB, TextTypes
 
 
 # начать рассылку
@@ -51,3 +47,10 @@ async def admin_save_text(msg: Message, state: FSMContext):
     )
 
     await msg.answer('Текст успешно обновлён')
+
+
+# обновить стату
+@dp.callback_query(lambda cb: cb.data.startswith(BaseCB.STATISTIC_UPDATE.value))
+async def admin_edit_text(cb: CallbackQuery):
+    await com_start_admin(user_id=cb.from_user.id, message_id=cb.message.message_id)
+    await cb.answer('Данные обновлены')

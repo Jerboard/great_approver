@@ -5,6 +5,7 @@ from enums import BaseCB, TextTypes
 
 def get_admin_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='🔄 Обновить статистику', callback_data=BaseCB.STATISTIC_UPDATE.value)],
         [InlineKeyboardButton(text='📯 Сделать рассылку', callback_data=BaseCB.SENDING_MESSAGES.value)],
         [InlineKeyboardButton(text='📝 Изменить текст приветствия',
                               callback_data=f'{BaseCB.ADMIN_EDIT_TEXT.value}:{TextTypes.FIRST.value}')],

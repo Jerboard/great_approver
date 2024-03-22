@@ -2,39 +2,13 @@ from aiogram.types import ChatJoinRequest, Message, CallbackQuery, ReplyKeyboard
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.enums.content_type import ContentType
-
-import logging
-import json
 
 import db
 import keyboards as kb
 from init import dp, bot, ADMINS, CHANNEL_ID
 from utils.entities_utils import recover_entities
-from enums import BaseCB, KeyboardButtons, TextTypes
-
-
-async def com_start_for_user(user_id: int):
-    await db.update_user(user_id=user_id, is_active=True)
-    text_info = await db.get_text (channel_id=CHANNEL_ID, text_type=TextTypes.SECOND.value)
-    entities = recover_entities (text_info.entities)
-    if text_info.photo_id:
-        await bot.send_photo (
-            chat_id=user_id,
-            photo=text_info.photo_id,
-            caption=text_info.text,
-            caption_entities=entities,
-            parse_mode=None,
-            protect_content=True,
-            reply_markup=ReplyKeyboardRemove ())
-    else:
-        await bot.send_message(
-            chat_id=user_id,
-            text=text_info.text,
-            entities=entities,
-            parse_mode=None,
-            protect_content=True,
-            reply_markup=ReplyKeyboardRemove())
+from utils.message_utils import com_start_admin, com_start_for_user
+from enums import BaseCB, TextTypes
 
 
 @dp.chat_join_request()
@@ -81,14 +55,8 @@ async def chat_join_request(request: ChatJoinRequest):
 @dp.message (CommandStart())
 async def com_start(msg: Message):
     if msg.from_user.id in ADMINS:
-        users = await db.get_all_users()
-        count_active_user = 0
-        for user in users:
-            if user.is_active:
-                count_active_user += 1
-        text = (f'<b>Всего пользователей:</b> {len(users)}\n'
-                f'<b>Получили подарок:</b> {count_active_user}')
-        await msg.answer(text, reply_markup=kb.get_admin_kb())
+        await com_start_admin(user_id=msg.from_user.id)
+
     else:
         await com_start_for_user(user_id=msg.from_user.id)
 
