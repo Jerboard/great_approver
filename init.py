@@ -35,10 +35,9 @@ TZ = timezone('Europe/Moscow')
 DATE_FORMAT = '%d.%m.%Y'
 
 
-
 async def set_main_menu() -> None:
     main_menu_commands = [
         BotCommand(command='/start',
-                   description='Перезапустить бот'),
+                   description='Обновить бот'),
     ]
     await bot.set_my_commands (main_menu_commands)
