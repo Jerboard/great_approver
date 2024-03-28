@@ -36,7 +36,7 @@ async def chat_join_request(request: ChatJoinRequest):
     try:
         await request.approve()
     except Exception as ex:
-        text = (f'‼️ Не смок одобрить запрос\n'
+        text = (f'‼️ Не смог одобрить запрос\n'
                 f'Пользователь: {request.from_user.full_name} ({request.from_user.username})\n'
                 f'{ex}')
         for admin_id in ADMINS:
