@@ -1,11 +1,11 @@
-from aiogram.types import ChatJoinRequest, Message, CallbackQuery, ReplyKeyboardRemove, MessageEntity
+from aiogram.types import ChatJoinRequest, Message, CallbackQuery
 from aiogram.filters import CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 
 import db
 import keyboards as kb
-from init import dp, bot, ADMINS, CHANNEL_ID
+from init import dp, bot, ADMINS, CHANNEL_ID, log_error
 from utils.entities_utils import recover_entities
 from utils.message_utils import com_start_admin, com_start_for_user
 from enums import BaseCB, TextTypes
@@ -18,24 +18,28 @@ async def chat_join_request(request: ChatJoinRequest):
 
     button_info = await db.get_text (channel_id=CHANNEL_ID, text_type=TextTypes.BUTTON.value)
 
-    if text_info.photo_id:
-        await request.answer_photo_pm(
-            photo=text_info.photo_id,
-            caption=text_info.text,
-            caption_entities=entities,
-            parse_mode=None,
-            reply_markup=kb.get_stat_user_kb (text=button_info.text)
-        )
-    else:
-        await request.answer_pm(
-            text=text_info.text,
-            entities=entities,
-            parse_mode=None,
-            reply_markup=kb.get_stat_user_kb(text=button_info.text)
-        )
+    try:
+        if text_info.photo_id:
+            await request.answer_photo_pm(
+                photo=text_info.photo_id,
+                caption=text_info.text,
+                caption_entities=entities,
+                parse_mode=None,
+                reply_markup=kb.get_stat_user_kb (text=button_info.text)
+            )
+        else:
+            await request.answer_pm(
+                text=text_info.text,
+                entities=entities,
+                parse_mode=None,
+                reply_markup=kb.get_stat_user_kb(text=button_info.text)
+            )
+    except Exception as ex:
+        log_error(ex)
     try:
         await request.approve()
     except Exception as ex:
+        log_error (ex)
         text = (f'‼️ Не смог одобрить запрос\n'
                 f'Пользователь: {request.from_user.full_name} ({request.from_user.username})\n'
                 f'{ex}')
