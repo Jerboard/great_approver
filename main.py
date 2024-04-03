@@ -2,7 +2,7 @@ import logging
 import asyncio
 import sys
 
-from init import DEBUG, bot, set_main_menu
+from init import DEBUG, bot, set_main_menu, log_error
 from handlers import dp
 from db.base import init_models
 
@@ -10,6 +10,7 @@ from db.base import init_models
 async def main() -> None:
     await init_models()
     await set_main_menu()
+    log_error('start', with_traceback=False)
     await dp.start_polling(bot)
     await bot.session.close()
 
